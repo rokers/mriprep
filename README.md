@@ -11,14 +11,14 @@ TODO: get CLI command from Amr/Ameen to download BIDS data from XNAT - [https://
 
 4. Correct locations and directories related to the project in dcm2bids_setup.m
 
-   for example:
-   case {'Abdalla'}
-   user='/Users/azm9155/';
-   projectDir = [user,'Desktop/Ambl'];
-   githubDir = '~/Documents/MATLAB/Visual_studies/GitHub';
-   freesurferDir = '/Applications/freesurfer/7.4.1';
-   fslDir = '/usr/local/fsl';
-   configfilePath = [user,'Documents/GitHub/nyuad_mr_pipeline/config_20230918.json'];
+      for example:
+      case {'Abdalla'}
+      user='/Users/azm9155/';
+      projectDir = [user,'Desktop/Ambl'];
+      githubDir = '~/Documents/MATLAB/Visual_studies/GitHub';
+      freesurferDir = '/Applications/freesurfer/7.4.1';
+      fslDir = '/usr/local/fsl';
+      configfilePath = [user,'Documents/GitHub/nyuad_mr_pipeline/config_20230918.json'];
 
 6. once you correct this part, you need to run "dcm2bids_run.m", but before you run it, you need to choose which step to run by
 
