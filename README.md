@@ -25,21 +25,20 @@ It is very importantant to have enough # of files on your account as fMRIprep wi
 
 To run fMRI prep, you need to edit the following section in the file called "run_fmriprep_41k_array.sh"
 
-
-WORKDIR=/scratch/azm9155/Retinotopy/work/$subject/${SLURM_ARRAY_TASK_ID}
-
-# *** Set BRAIMCORE_ENGINE in case not using -e option ***
-export BRAIMCORE_ENGINE=fmriprep
-#
-# *** Grab a particular subject
-
-#
-# *** DEFINE VARIABLES ***
-#
-#export SUBJECT_ID=${subject}
-export SUBJECT_ID=$1
-export SUBJECTS_DIR=/scratch/azm9155/Retinotopy/derivatives/freesurfer
-export STUDY_DIR=/scratch/azm9155/Retinotopy
+            WORKDIR=/scratch/azm9155/Retinotopy/work/$subject/${SLURM_ARRAY_TASK_ID}
+            
+            # *** Set BRAIMCORE_ENGINE in case not using -e option ***
+            export BRAIMCORE_ENGINE=fmriprep
+            #
+            # *** Grab a particular subject
+            
+            #
+            # *** DEFINE VARIABLES ***
+            #
+            #export SUBJECT_ID=${subject}
+            export SUBJECT_ID=$1
+            export SUBJECTS_DIR=/scratch/azm9155/Retinotopy/derivatives/freesurfer
+            export STUDY_DIR=/scratch/azm9155/Retinotopy
 
 Once edited, to run this script, you need to call it by 
 sbatch run_fmriprep_41k_array.sh <subject_ID>
