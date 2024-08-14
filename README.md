@@ -5,6 +5,12 @@ Preprocessing pipeline for MRI data acquired at NYUAD and stored on XNAT.
 
 TODO: currently dcm2bids needs to be run on each participant individually. Amr/Ameen need to update, so that it runs in the project level. 
 
+TODO: make sure pydeface is run as part of the pipeline, using this snippet in the config.json file
+
+               "post_op": [{"cmd": "pydeface --outfile dst_file src_file --verbose --debug --force",
+               "datatype": "anat",
+               "suffix": ["T1w", "FLAIR", "T2w"]}],
+
 Download BIDS data from XNAT - https://www.notion.so/rokerslab/XNAT-CLI-Download-Setup-51d4a3425fd1462590303f9e4fa41610?pvs=4
    
 3. Download the BIDS converted data to your local machine
