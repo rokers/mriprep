@@ -13,19 +13,20 @@ TODO: get CLI command from Amr/Ameen to download BIDS data from XNAT - [https://
 
    for example:
    case {'Abdalla'}
-    user='/Users/azm9155/';
-    projectDir = [user,'Desktop/Ambl'];
-    githubDir = '~/Documents/MATLAB/Visual_studies/GitHub';
-    freesurferDir = '/Applications/freesurfer/7.4.1';
-    fslDir = '/usr/local/fsl';
-    configfilePath = [user,'Documents/GitHub/nyuad_mr_pipeline/config_20230918.json'];
+   user='/Users/azm9155/';
+   projectDir = [user,'Desktop/Ambl'];
+   githubDir = '~/Documents/MATLAB/Visual_studies/GitHub';
+   freesurferDir = '/Applications/freesurfer/7.4.1';
+   fslDir = '/usr/local/fsl';
+   configfilePath = [user,'Documents/GitHub/nyuad_mr_pipeline/config_20230918.json'];
 
 6. once you correct this part, you need to run "dcm2bids_run.m", but before you run it, you need to choose which step to run by
-    Dounzip=0; % 1 means run this step, 0 means do no run this step
-    Dodcm2bids=0;
-    DoFixsBref=1;
-    DoCorrectJson=1;
-    DoValidateBids=1; % make sure you have validatebids installed on your computer. 
+
+   Dounzip=0; % 1 means run this step, 0 means do no run this step
+   Dodcm2bids=0;
+   DoFixsBref=1;
+   DoCorrectJson=1;
+   DoValidateBids=1; % make sure you have validatebids installed on your computer. 
 
 Upto this point, you have got the data in BIDS structure, and you need to move it to the HPC computer (e.g. Jubail) to run fMRI prep. 
 It is very importantant to have enough # of files on your account as fMRIprep will run and will generate a large number of files. 
