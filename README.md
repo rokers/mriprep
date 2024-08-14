@@ -4,7 +4,7 @@ Preprocessing of MRI data acquired at NYUAD to run the scripts in this project t
 1. Perform the dcm2bids step on xnat - http://xnat.abudhabi.nyu.edu
 
 TODO: currently dcm2bids needs to be run on each participant individually. Amr/Ameen need to update, so that it runs in the project level. 
-TODO: get CLI command from Amr/Ameen to download BIDS data from XNAT - https://github.com/bids-standard/bids-validator
+TODO: get CLI command from Amr/Ameen to download BIDS data from XNAT - [https://github.com/bids-standard/bids-validator](https://www.notion.so/rokerslab/XNAT-CLI-Download-Setup-51d4a3425fd1462590303f9e4fa41610?pvs=4)
    
 3. Download the BIDS converted data to your local machine
 
