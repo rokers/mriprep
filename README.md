@@ -1,9 +1,16 @@
 # mriprep
-Preprocessing of MRI data acquired at NYUAD
-to run the scripts in this project to perform the preprocessing of the structural and fMRI data based on the data from xnat 
-1. Perform the dcm2bids step on xnat
-2. Download the BIDS converted data to your local machine
-3. correct the location and directories related to the project in your setup "dcm2bids_setup",
+Preprocessing of MRI data acquired at NYUAD to run the scripts in this project to perform the preprocessing of the structural and fMRI data based on the data from xnat 
+
+1. Perform the dcm2bids step on xnat - http://xnat.abudhabi.nyu.edu
+
+TODO: currently dcm2bids needs to be run on each participant individually. Amr/Ameen need to update, so that it runs in the project level. 
+TODO: get CLI command from Amr/Ameen to download BIDS data from XNAT - https://github.com/bids-standard/bids-validator
+   
+3. Download the BIDS converted data to your local machine
+
+
+4. Correct locations and directories related to the project in dcm2bids_setup.m
+
    for example:
    case {'Abdalla'}
     user='/Users/azm9155/';
@@ -13,7 +20,7 @@ to run the scripts in this project to perform the preprocessing of the structura
     fslDir = '/usr/local/fsl';
     configfilePath = [user,'Documents/GitHub/nyuad_mr_pipeline/config_20230918.json'];
 
-4. once you correct this part, you need to run "dcm2bids_run.m", but before you run it, you need to choose which step to run by
+6. once you correct this part, you need to run "dcm2bids_run.m", but before you run it, you need to choose which step to run by
     Dounzip=0; % 1 means run this step, 0 means do no run this step
     Dodcm2bids=0;
     DoFixsBref=1;
