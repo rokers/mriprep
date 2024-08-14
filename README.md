@@ -1,24 +1,32 @@
 # mriprep
-Preprocessing of MRI data acquired at NYUAD
-to run the scripts in this project to perform the preprocessing of the structural and fMRI data based on the data from xnat 
-1. Perform the dcm2bids step on xnat
-2. Download the BIDS converted data to your local machine
-3. correct the location and directories related to the project in your setup "dcm2bids_setup",
-   for example:
-   case {'Abdalla'}
-    user='/Users/azm9155/';
-    projectDir = [user,'Desktop/Ambl'];
-    githubDir = '~/Documents/MATLAB/Visual_studies/GitHub';
-    freesurferDir = '/Applications/freesurfer/7.4.1';
-    fslDir = '/usr/local/fsl';
-    configfilePath = [user,'Documents/GitHub/nyuad_mr_pipeline/config_20230918.json'];
+Preprocessing of MRI data acquired at NYUAD to run the scripts in this project to perform the preprocessing of the structural and fMRI data based on the data from xnat 
 
-4. once you correct this part, you need to run "dcm2bids_run.m", but before you run it, you need to choose which step to run by
-    Dounzip=0; % 1 means run this step, 0 means do no run this step
-    Dodcm2bids=0;
-    DoFixsBref=1;
-    DoCorrectJson=1;
-    DoValidateBids=1; % make sure you have validatebids installed on your computer. 
+1. Perform the dcm2bids step on xnat - http://xnat.abudhabi.nyu.edu
+
+TODO: currently dcm2bids needs to be run on each participant individually. Amr/Ameen need to update, so that it runs in the project level. 
+TODO: get CLI command from Amr/Ameen to download BIDS data from XNAT - https://www.notion.so/rokerslab/XNAT-CLI-Download-Setup-51d4a3425fd1462590303f9e4fa41610?pvs=4
+   
+3. Download the BIDS converted data to your local machine
+
+
+4. Correct locations and directories related to the project in dcm2bids_setup.m
+
+      for example:
+      case {'Abdalla'}
+      user='/Users/azm9155/';
+      projectDir = [user,'Desktop/Ambl'];
+      githubDir = '~/Documents/MATLAB/Visual_studies/GitHub';
+      freesurferDir = '/Applications/freesurfer/7.4.1';
+      fslDir = '/usr/local/fsl';
+      configfilePath = [user,'Documents/GitHub/nyuad_mr_pipeline/config_20230918.json'];
+
+6. once you correct this part, you need to run "dcm2bids_run.m", but before you run it, you need to choose which step to run by
+
+   Dounzip=0; % 1 means run this step, 0 means do no run this step
+   Dodcm2bids=0;
+   DoFixsBref=1;
+   DoCorrectJson=1;
+   DoValidateBids=1; % make sure you have validatebids installed on your computer. 
 
 Upto this point, you have got the data in BIDS structure, and you need to move it to the HPC computer (e.g. Jubail) to run fMRI prep. 
 It is very importantant to have enough # of files on your account as fMRIprep will run and will generate a large number of files. 
