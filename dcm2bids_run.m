@@ -5,33 +5,39 @@
 
 clear all; close all;  clc
 
-Dounzip=0;
-Dodcm2bids=0;
-DoFixsBref=0;
-DoCorrectJson=1;
-DoValidateBids=1;
+%% setup
+do_unzip=0;
+do_dcm2bids=0;
+do_fix_sbref=0;
+do_correct_json=1;
+do_validate_bids=0; % not currently working
 
-[project_dir, configfilePath] = dcm2bids_setup('br87')
+[project_dir, configfilePath, ~, githubDir] = dcm2bids_setup('rokers');
 
-ses_num = '01';
-if length(ses_num) < 2;
-    ses_num = strcat('0',ses_num);
+% ses_num = '01';
+% if length(ses_num) < 2;
+%     ses_num = strcat('0',ses_num);
+% end
+
+% sourcedata will not exist if only BIDS is downloaded
+sourcedatadir_all = fullfile(project_dir,'sourcedata');
+% sourcedatadir = fullfile(project_dir,'sourcedata',SubjectName)
+subs = dir([sourcedatadir_all filesep 'Subject*']);
+if isfolder(fullfile(project_dir,'rawdata'))
+    bids_dir = fullfile(project_dir,'rawdata');
+else
+    bids_dir = project_dir;
 end
 
-sourcedatadir_all = fullfile(project_dir,'sourcedata')
-% sourcedatadir = fullfile(project_dir,'sourcedata',SubjectName)
-d = dir(sprintf('%s/Subject*',sourcedatadir_all));
-bids_dir = fullfile(project_dir,'rawdata')
+%% do dcm2bids
+for i=1:length(subs)
 
-%%
-for i=1:length(d)
-
-    SubjectName = d(i).name
-    subject_num=extractAfter(SubjectName,"_");
-    sourcedatadir = fullfile(project_dir,'sourcedata',SubjectName)
+    sub_name = subs(i).name;
+    sub_num=extractAfter(sub_name,"_");
+    sourcedatadir = fullfile(project_dir,'sourcedata',sub_name);
 
     %% unzip files that are still compressed
-    if Dounzip == 1
+    if do_unzip == 1
         disp('Unzipping any compressed dicoms. Please wait . . .')
         zippedFiles = dir(fullfile(sourcedatadir, sprintf('ses_%s',ses_num), '**/*.zip'));
         D = arrayfun(@(x) unzip(fullfile(zippedFiles(x).folder, zippedFiles(x).name), ...
@@ -43,51 +49,63 @@ for i=1:length(d)
 
     sessionsource = fullfile(sourcedatadir, sprintf('ses_%s',ses_num))
 
-    if Dodcm2bids == 1
+    if do_dcm2bids == 1
         cmd = sprintf("dcm2bids -d %s -o %s -p %s -s %s -c %s --clobber", ...
-            sessionsource, bids_dir, subject_num, ses_num, configfilePath);
+            sessionsource, bids_dir, sub_num, ses_num, configfilePath);
         [status, cmdout] = system(cmd, '-echo');
 
-        %%
     end
+end
 
-    bids_func_dir = fullfile(bids_dir, ['sub-', subject_num], sprintf('ses-%s',ses_num), 'func')
+%% fix dcm2bids
+subs = dir(fullfile(bids_dir, 'sub-*'));
+for i=1:length(subs)
+    sess = dir(fullfile(bids_dir, subs(i).name, 'ses-*'));
+    for ses_i = 1:length(sess)
 
-    filetypes = {'.json', '.nii.gz'};
-    if DoFixsBref == 1
-        for fi=1:numel(filetypes)
-            filetype = filetypes{fi};
-            ap_sbref_list = dir(fullfile(bids_func_dir, sprintf('*dir-AP_*sbref*%s', filetype)));
-            pa_sbref_list = dir(fullfile(bids_func_dir, sprintf('*dir-PA_*sbref*%s', filetype)));
+        bids_func_dir = fullfile(bids_dir, subs(i).name, sess(ses_i).name, 'func');
 
-            % for rare cases which multiple sbref (unneccesary)
-            ap_sbref = ap_sbref_list(1);
-            pa_sbref = pa_sbref_list(1);
+        filetypes = {'.json', '.nii.gz'};
+        if do_fix_sbref == 1
+            % TODO: for data from XNAT sbref may be in /dwi
+            for fi=1:numel(filetypes)
+                filetype = filetypes{fi};
+                ap_sbref_list = dir(fullfile(bids_func_dir, ['*dir-AP_*sbref*', filetype]));
+                pa_sbref_list = dir(fullfile(bids_func_dir, ['*dir-PA_*sbref*', filetype]));
 
-            % big fix it: this includes some of the sbref
-            task_runs = dir(fullfile(bids_func_dir, sprintf('*task*%s', filetype)));
+                if isempty(ap_sbref_list) || isempty(pa_sbref_list)
+                    warning('no sbrefs found')
+                end
 
-            for ii=1:numel(task_runs)
-                try
-                    if contains(task_runs(ii).name, 'dir-AP', IgnoreCase=true)
-                        copyfile(fullfile(ap_sbref.folder, ap_sbref.name), ...
-                            fullfile(task_runs(ii).folder, strrep(task_runs(ii).name, '_bold', '_sbref')))
-                    elseif contains(task_runs(ii).name, 'dir-PA', IgnoreCase=true)
-                        copyfile(fullfile(pa_sbref.folder, pa_sbref.name), ...
-                            fullfile(task_runs(ii).folder, strrep(task_runs(ii).name, '_bold', '_sbref')))
+                % for rare cases with multiple sbref (unneccesary)
+                ap_sbref = ap_sbref_list(1);
+                pa_sbref = pa_sbref_list(1);
+
+                % big fix it: this includes some of the sbref
+                task_runs = dir(fullfile(bids_func_dir, ['*task*' filetype]));
+
+                for ii=1:numel(task_runs)
+                    try
+                        if contains(task_runs(ii).name, 'dir-AP', IgnoreCase=true)
+                            copyfile(fullfile(ap_sbref.folder, ap_sbref.name), ...
+                                fullfile(task_runs(ii).folder, strrep(task_runs(ii).name, '_bold', '_sbref')))
+                        elseif contains(task_runs(ii).name, 'dir-PA', IgnoreCase=true)
+                            copyfile(fullfile(pa_sbref.folder, pa_sbref.name), ...
+                                fullfile(task_runs(ii).folder, strrep(task_runs(ii).name, '_bold', '_sbref')))
+                        end
+                    catch
+                        sprintf('Skipping %s', task_runs(ii).name)
+                        sprintf('Either already converted or sbref not found.')
                     end
-                catch
-                    sprintf('Skipping %s', task_runs(ii).name)
-                    sprintf('Either already converted of sbref not found.')
+                end
+
+                % delete redundant files
+                for dd=1:numel(ap_sbref_list)
+                    delete(fullfile(ap_sbref_list(dd).folder, ap_sbref_list(dd).name))
+                    delete(fullfile(pa_sbref_list(dd).folder, pa_sbref_list(dd).name))
                 end
             end
-
-            % delete redundant files
-            for dd=1:numel(ap_sbref_list)
-                delete(fullfile(ap_sbref_list(dd).folder, ap_sbref_list(dd).name))
-                delete(fullfile(pa_sbref_list(dd).folder, pa_sbref_list(dd).name))
-            end
-
+            disp('Added sbref file to each run')
         end
     end
 
@@ -97,10 +115,10 @@ for i=1:length(d)
     % first task run (both field maps should apply to all bold runs, optionally
     % to sbrefs as well)
 
-    bids_fmap_dir = fullfile(bids_dir, ['sub-', subject_num], sprintf('ses-%s',ses_num),   'fmap')
+    bids_fmap_dir = fullfile(bids_dir, subs(i).name, sess(ses_i).name, 'fmap');
     func_content = dir(fullfile(bids_func_dir, '*.nii.gz'));
 
-    if DoCorrectJson == 1
+    if do_correct_json == 1
         if isfolder(bids_fmap_dir)
 
             % list fmap jsons
@@ -109,7 +127,7 @@ for i=1:length(d)
             valFill = {};
 
             for ii=1:numel(func_content)
-                intendedItem = [fullfile(sprintf('ses-%s',ses_num), 'func', func_content(ii).name)];
+                intendedItem = [fullfile(sess(ses_i).name, 'func', func_content(ii).name)];
                 % intendedItem = ['bids::', fullfile(['sub-', subject_num], sprintf('ses-%s',ses_num), 'func', func_content(ii).name)]
                 valFill = [{intendedItem}; valFill];
             end
@@ -121,7 +139,7 @@ for i=1:length(d)
                 raw = fread(fid,inf);
                 str = char(raw');
                 fclose(fid);
-                disp('~~~~')
+                
                 % decode and modify
                 val = jsondecode(str);
                 valModified = val; valModified.IntendedFor = valFill;
@@ -136,15 +154,17 @@ for i=1:length(d)
                 fid = fopen(fname,'w');
                 fwrite(fid,str);
                 fclose(fid);
+                
             end
+            disp('Updated fmap .json intendedFor fields')
         end
     end
 
     %% Validating BIDS
     % TODO: does not work. activate python package in startup or here
     % needed to remove  "sub-0149_ses-01_20231019-111209.log" and "tmp_dcm2bids" for bids validation to be succesful. Fix bidsignore
-    if DoValidateBids == 1
-        cmd = sprintf("bids-validator %s", bids_dir);
+    if do_validate_bids == 1
+        cmd = [fullfile(githubDir, 'bids-validator ') bids_dir];
         [status, cmdout] = system(cmd, '-echo');
 
         % pyrun("from bids_validator import BIDSValidator")

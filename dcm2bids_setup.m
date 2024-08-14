@@ -27,9 +27,9 @@ switch(username)
         fslDir = '/usr/local/fsl';
         configfilePath = [user,'Documents/GitHub/nyuad_mr_pipeline/config_20230918.json'];
 
-    case {'br87'}
-        user='/Users/br87/';
-        projectDir = '/Volumes/server/Projects/Retinotopy_Stereo';
+    case {'rokers'}
+        user='/Users/rokers/';
+        projectDir = '~/Documents/MRI/rokerslab_retinotopy_2024_002';
         githubDir = '~/Documents/GitHub';
         freesurferDir = '/Applications/freesurfer/7.4.1';
         fslDir = '/usr/local/fsl';
