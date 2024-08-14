@@ -5,7 +5,7 @@ Preprocessing pipeline for MRI data acquired at NYUAD and stored on XNAT.
 
 TODO: currently dcm2bids needs to be run on each participant individually. Amr/Ameen need to update, so that it runs in the project level. 
 
-TODO: get CLI command from Amr/Ameen to download BIDS data from XNAT - https://www.notion.so/rokerslab/XNAT-CLI-Download-Setup-51d4a3425fd1462590303f9e4fa41610?pvs=4
+Download BIDS data from XNAT - https://www.notion.so/rokerslab/XNAT-CLI-Download-Setup-51d4a3425fd1462590303f9e4fa41610?pvs=4
    
 3. Download the BIDS converted data to your local machine
 
